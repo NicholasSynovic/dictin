@@ -1,6 +1,6 @@
 # Dictionary Generator
 
-> A program meant to generate word lists derived from online dictionaries.
+> A program meant to generate word and definition lists derived from online dictionaries.
 
 ## Table of Contents
 
