@@ -1,4 +1,4 @@
-# Dictionary
+# Dictionary Generator
 
 > A program meant to generate word lists derived from online dictionaries.
 
@@ -16,9 +16,15 @@
 
 This application goes to online dictionaries (currently Merriam Webster) and scrapes their directory of words to generate word lists and their definitions.
 
+## How to Run
+
+1. Install the `requirements.txt` in the .devcontainer folder
+2. Execute the `.py` files with no arguements
+
 ## TODO
 
-1. Collect definitions
-2. Create log file containing the amount of words under a given letter
-3. Add multithreading
-4. Add more dictionaries
+1. Improve program execution
+2. Collect definitions
+3. Create log file containing the amount of words under a given letter
+4. Add multithreading
+5. Add more dictionaries
