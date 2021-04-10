@@ -1,10 +1,10 @@
 import re
 
-from progress.bar import Bar
-from progress.spinner import MoonSpinner
 import requests
 from bs4 import BeautifulSoup, Tag
 from bs4.element import ResultSet
+from progress.bar import Bar
+from progress.spinner import MoonSpinner
 
 
 class MerriamWebster:
