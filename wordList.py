@@ -1,3 +1,5 @@
+import re
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -10,9 +12,18 @@ class WordList:
         resp = requests.get(url=url).text
         return BeautifulSoup(markup=resp, features="lxml")
 
+    def parseHTML(self, html: BeautifulSoup) -> tuple:
+        def getNumberOfPages() -> int:
+            numberOfPagesText = html.find(name="span", attrs={"class": "counters"})
+            print(numberOfPagesText.text)
+
+        wordSet = set()
+        getNumberOfPages()
+
     def program(self) -> bool:
         return False
 
 
 w = WordList()
-print(type(w.getHTML(w.merriamWebsterURL)))
+h = w.getHTML(w.merriamWebsterURL)
+p = w.parseHTML(h)
