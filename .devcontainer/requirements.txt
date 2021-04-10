@@ -9,3 +9,4 @@ urllib3
 isort
 black
 lxml
+progress
