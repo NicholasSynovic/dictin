@@ -7,7 +7,7 @@ from progress.bar import Bar
 from progress.spinner import MoonSpinner
 
 
-class MerriamWebster:
+class WordList:
     def __init__(self) -> None:
         self.merriamWebsterURL = "https://www.merriam-webster.com/browse/dictionary/"
         self.currentURL: str = ""
@@ -46,7 +46,7 @@ def program() -> bool:
 
     print()
 
-    mw = MerriamWebster()
+    mw = WordList()
 
     with Bar("Getting Page Numbers for Dictionary Indicies... ", max=27) as bar:
         for letter in mwLetterList:
@@ -73,7 +73,7 @@ def program() -> bool:
 
     print()
 
-    with open("wordList.txt", "w") as wordList:
+    with open("MerriamWebster_WordList.txt", "w") as wordList:
         for word in words:
             wordList.write(word + "\n")
         print("Wrote word list to file")
