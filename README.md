@@ -24,7 +24,10 @@ This application goes to online dictionaries (currently Merriam Webster) and scr
 ## TODO
 
 1. Improve program execution
-2. Collect definitions
-3. Create log file containing the amount of words under a given letter
-4. Add multithreading
-5. Add more dictionaries
+2. Store output in an `output` folder
+3. Create release files of the word lists and dictionary files
+4. Automate release files
+5. Collect definitions
+6. Create log file containing the amount of words under a given letter
+7. Add multithreading
+8. Add more dictionaries
