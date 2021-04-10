@@ -1,8 +1,10 @@
 import re
-from bs4.element import ResultSet
 
+from progress.bar import Bar
+from progress.spinner import MoonSpinner
 import requests
 from bs4 import BeautifulSoup, Tag
+from bs4.element import ResultSet
 
 
 class MerriamWebster:
@@ -37,23 +39,47 @@ def program() -> bool:
     mwLetterList = ["0"]
     mwPageCount = []
 
-    for unicodeChar in range(97, 123):
-        mwLetterList.append(chr(unicodeChar).lower())
+    with MoonSpinner("Creating Char List... ") as spinner:
+        for unicodeChar in range(97, 123):
+            mwLetterList.append(chr(unicodeChar).lower())
+            spinner.next()
+
+    print()
 
     mw = MerriamWebster()
 
-    for letter in mwLetterList:
-        firstPage = mw.getHTML(letter=letter)
-        pageCount = mw.getNumberOfPages(firstPage)
-        mwPageCount.append(pageCount)
+    with Bar("Getting Page Numbers for Dictionary Indicies... ", max=27) as bar:
+        for letter in mwLetterList:
+            firstPage = mw.getHTML(letter=letter)
+            pageCount = mw.getNumberOfPages(firstPage)
+            mwPageCount.append(pageCount)
+            bar.next()
 
     mwDict = dict(zip(mwLetterList, mwPageCount))
 
+    print()
+
     for key in mwDict.keys():
-        for page in range(mwDict[key]):
-            pageString = str(page + 1)
-            html = mw.getHTML(letter=key, page=pageString)
-            words += mw.getWords(html=html)
+        with Bar(
+            "Getting Words Under the Dictionary Index: " + key + "... ",
+            max=mwDict[key],
+        ) as bar:
+            for page in range(mwDict[key]):
+                pageString = str(page + 1)
+                html = mw.getHTML(letter=key, page=pageString)
+                words += mw.getWords(html=html)
+                mwDict[key] = len(words)
+                bar.next()
+
+    print()
+
+    with open("wordList.txt", "w") as wordList:
+        for word in words:
+            wordList.write(word + "\n")
+        print("Wrote word list to file")
+        wordList.close()
+    return True
 
 
-program()
+if __name__ == "__main__":
+    program()
