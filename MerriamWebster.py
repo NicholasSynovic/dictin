@@ -73,7 +73,7 @@ def program() -> bool:
 
     print()
 
-    with open("MerriamWebster_WordList.txt", "w") as wordList:
+    with open("output/MerriamWebster_WordList.txt", "w") as wordList:
         for word in words:
             wordList.write(word + "\n")
         print("Wrote word list to file")
