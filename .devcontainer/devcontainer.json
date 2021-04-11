@@ -1,10 +1,11 @@
 {
     "name": "Dictionary",
     "extensions": [
-        "ms-python.python",
-        "ms-python.vscode-pylance",
-        "yzhang.markdown-all-in-one"
-    ],
+		"ms-python.python",
+		"ms-python.vscode-pylance",
+		"yzhang.markdown-all-in-one",
+		"ms-azuretools.vscode-docker"
+	],
     "settings": {
         "python.autoComplete.addBrackets": true,
         "python.autoUpdateLanguageServer": true,

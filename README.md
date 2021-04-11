@@ -4,9 +4,10 @@
 
 ## Table of Contents
 
-- [Dictionary](#dictionary)
+- [Dictionary Generator](#dictionary-generator)
   - [Table of Contents](#table-of-contents)
   - [About](#about)
+  - [How to Run](#how-to-run)
   - [TODO](#todo)
 
 ## About
@@ -24,10 +25,9 @@ This application goes to online dictionaries (currently Merriam Webster) and scr
 ## TODO
 
 1. Improve program execution
-2. Store output in an `output` folder
-3. Create release files of the word lists and dictionary files
-4. Automate release files
-5. Collect definitions
-6. Create log file containing the amount of words under a given letter
-7. Add multithreading
-8. Add more dictionaries
+2. Create release files of the word lists and dictionary files
+3. Automate release files
+4. Collect definitions
+5. Create log file containing the amount of words under a given letter
+6. Add multithreading
+7. Add more dictionaries
