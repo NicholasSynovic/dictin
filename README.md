@@ -7,7 +7,7 @@
 - [Dictionary Generator](#dictionary-generator)
   - [Table of Contents](#table-of-contents)
   - [About](#about)
-  - [How to Run](#how-to-run)
+  - [How to Execute](#how-to-execute)
   - [TODO](#todo)
 
 ## About
@@ -17,10 +17,10 @@
 
 This application goes to online dictionaries (currently Merriam Webster) and scrapes their directory of words to generate word lists and their definitions.
 
-## How to Run
+## How to Execute
 
-1. Install the `requirements.txt` in the .devcontainer folder
-2. Execute the `.py` files with no arguements
+1. In a terminal execute: `docker build -t dictionaryGenerator .`
+2. In a terminal execute: `docker run -v "$(pwd)":DictionaryGenerator-Output dictionaryGenerator`
 
 ## TODO
 
