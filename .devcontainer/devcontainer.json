@@ -1,5 +1,5 @@
 {
-    "name": "Dictionary",
+    "name": "Dictionary Generator",
     "extensions": [
 		"ms-python.python",
 		"ms-python.vscode-pylance",
