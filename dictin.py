@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
                 bar.next()
 
-    with open("output/MerriamWebster_WordList.json", "w") as wordFile:
+    with open("output.json", "w") as wordFile:
         wordFile.write(dumps(store))
-        print("Wrote word list to file output/MerriamWebster_WordList.json")
+        print("Wrote word list to file output.json")
         wordFile.close()
