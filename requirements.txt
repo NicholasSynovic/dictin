@@ -2,5 +2,6 @@ black
 bs4
 isort
 lxml
+pandas
 progress
 requests

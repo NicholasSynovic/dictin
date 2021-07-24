@@ -3,7 +3,7 @@ import re
 import requests
 from bs4 import BeautifulSoup, Tag
 from bs4.element import ResultSet
-from progress.bar import Bar
+from progress.bar import PixelBar
 from requests.models import Response
 
 from json import dumps
@@ -34,6 +34,13 @@ def getWords(html: BeautifulSoup) -> list:
     return words
 
 
+def writeToJSON(filename: str, store: dict) -> bool:
+    with open(filename, "w") as wordFile:
+        wordFile.write(dumps(store))
+        print(f"Wrote word list to file output/{filename}")
+        wordFile.close()
+
+
 if __name__ == "__main__":
     words: list = []
     letterList: list = ["0"]
@@ -43,7 +50,7 @@ if __name__ == "__main__":
     for unicodeChar in range(97, 123):
         letterList.append(chr(unicodeChar).lower())
 
-    with Bar("Getting page numbers for dictionary keys... ", max=27) as bar:
+    with PixelBar("Getting page numbers for dictionary keys... ", max=27) as pb:
 
         letter: str
         for letter in letterList:
@@ -51,7 +58,7 @@ if __name__ == "__main__":
             firstPage: BeautifulSoup = getHTML(url=url)
             pages: int = getNumberOfPages(firstPage)
             pageCount.append({"wordPageCount": pages})
-            bar.next()
+            pb.next()
 
     store = dict(zip(letterList, pageCount))
 
@@ -61,10 +68,10 @@ if __name__ == "__main__":
         store[key]["numberOfWords"] = 0
         store[key]["urls"] = {}
 
-        with Bar(
+        with PixelBar(
             "Getting words listed under the dictionary index: " + key + "... ",
             max=store[key]["wordPageCount"],
-        ) as bar:
+        ) as pb:
             page: int
             for page in range(store[key]["wordPageCount"]):
                 pageString: str = str(page + 1)
@@ -77,9 +84,6 @@ if __name__ == "__main__":
                 store[key]["urls"][url] = words
                 store[key]["numberOfWords"] += len(words)
 
-                bar.next()
+                pb.next()
 
-    with open("output.json", "w") as wordFile:
-        wordFile.write(dumps(store))
-        print("Wrote word list to file output.json")
-        wordFile.close()
+        writeToJSON(filename=f"{key}.json", store=store[key])
