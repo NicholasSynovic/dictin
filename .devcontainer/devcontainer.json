@@ -1,11 +1,9 @@
 {
     "name": "Dictionary Generator",
     "extensions": [
-		"ms-python.python",
-		"ms-python.vscode-pylance",
-		"yzhang.markdown-all-in-one",
-		"ms-azuretools.vscode-docker"
-	],
+        "ms-python.python",
+        "yzhang.markdown-all-in-one",
+    ],
     "settings": {
         "python.autoComplete.addBrackets": true,
         "python.autoUpdateLanguageServer": true,
@@ -15,5 +13,5 @@
         "python.testing.unittestEnabled": true,
         "python.analysis.completeFunctionParens": true,
     },
-    "dockerFile": "Dockerfile",
+    "image": "python:3.9.6-buster",
 }
