@@ -6,11 +6,11 @@ from bs4.element import ResultSet
 from progress.bar import Bar
 from requests.models import Response
 
+from json import dumps
 
-def getHTML(letter: str, page: str = "1") -> BeautifulSoup:
-    resp: Response = requests.get(
-        url="https://www.merriam-webster.com/browse/dictionary/" + letter + "/" + page
-    ).text
+
+def getHTML(url: str) -> BeautifulSoup:
+    resp: Response = requests.get(url=url).text
     return BeautifulSoup(markup=resp, features="lxml")
 
 
@@ -47,30 +47,39 @@ if __name__ == "__main__":
 
         letter: str
         for letter in letterList:
-            firstPage: BeautifulSoup = getHTML(letter=letter)
-            pageCount: int = getNumberOfPages(firstPage)
-            pageCount.append(pageCount)
+            url: str = f"https://www.merriam-webster.com/browse/dictionary/{letter}/1"
+            firstPage: BeautifulSoup = getHTML(url=url)
+            pages: int = getNumberOfPages(firstPage)
+            pageCount.append({"wordPageCount": pages})
             bar.next()
 
-    mwDict = dict(zip(letterList, pageCount))
+    store = dict(zip(letterList, pageCount))
 
     key: str
-    for key in mwDict.keys():
+    for key in store.keys():
+
+        store[key]["numberOfWords"] = 0
+        store[key]["urls"] = {}
+
         with Bar(
             "Getting words listed under the dictionary index: " + key + "... ",
-            max=mwDict[key],
+            max=store[key]["wordPageCount"],
         ) as bar:
             page: int
-            for page in range(mwDict[key]):
+            for page in range(store[key]["wordPageCount"]):
                 pageString: str = str(page + 1)
-                html: BeautifulSoup = getHTML(letter=key, page=pageString)
+
+                url: str = f"https://www.merriam-webster.com/browse/dictionary/{key}/{pageString}"
+
+                html: BeautifulSoup = getHTML(url=url)
                 words += getWords(html=html)
-                mwDict[key] = len(words)
+
+                store[key]["urls"][url] = words
+                store[key]["numberOfWords"] += len(words)
+
                 bar.next()
 
-    with open("output/MerriamWebster_WordList.txt", "w") as wordList:
-        word: str
-        for word in words:
-            wordList.write(word + "\n")
-        print("Wrote word list to file")
-        wordList.close()
+    with open("output/MerriamWebster_WordList.json", "w") as wordFile:
+        wordFile.write(dumps(store))
+        print("Wrote word list to file output/MerriamWebster_WordList.json")
+        wordFile.close()
