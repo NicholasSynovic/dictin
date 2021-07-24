@@ -14,4 +14,4 @@ This application goes to Merriam Webster's online dictionary and gets the comple
 0. Have `Python 3.9+` installed
 1. Execute `pip install requirements.txt`
 2. Execute `python dictin.py`
-3. View the JSON in `output.json`
+3. View the JSON in `output/{LETTER}.json`
