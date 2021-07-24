@@ -1,12 +1,11 @@
 import re
+from json import dumps
 
 import requests
 from bs4 import BeautifulSoup, Tag
 from bs4.element import ResultSet
 from progress.bar import PixelBar
 from requests.models import Response
-
-from json import dumps
 
 
 def getHTML(url: str) -> BeautifulSoup:
