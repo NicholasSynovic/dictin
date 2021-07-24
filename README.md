@@ -7,7 +7,7 @@
 - Is this a web scraping program? **Yes**
 - Does this program break online dictionary TOS? **Probably**
 
-This application goes to Merriam Webster's online dictionary and gets the complete list of words and definitions for those words and exports it as JSON.
+This application goes to Merriam Webster's online dictionary and gets the complete list of words in JSON.
 
 ## How to Execute
 
