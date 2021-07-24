@@ -41,7 +41,7 @@ class WordList:
         return words
 
 
-def program() -> bool:
+if __name__ == "__main__":
     words: list = []
     mwLetterList: list = ["0"]
     mwPageCount: list = []
@@ -83,8 +83,3 @@ def program() -> bool:
             wordList.write(word + "\n")
         print("Wrote word list to file")
         wordList.close()
-    return True
-
-
-if __name__ == "__main__":
-    program()
