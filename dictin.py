@@ -1,5 +1,6 @@
 import re
 from json import dumps
+from os.path import exists
 
 import requests
 from bs4 import BeautifulSoup, Tag
@@ -8,18 +9,23 @@ from progress.bar import PixelBar
 from requests.models import Response
 
 
-def getHTML(url: str) -> BeautifulSoup:
-    resp: Response = requests.get(url=url).text
-    return BeautifulSoup(markup=resp, features="lxml")
+def getLetterPageCount(letter: str) -> int:
+    url: str = f"https://www.merriam-webster.com/browse/dictionary/{letter}/1"
 
+    html: BeautifulSoup = getHTML(url=url)
 
-def getNumberOfPages(html: BeautifulSoup) -> int:
     numberOfPagesText: str = html.find(name="span", attrs={"class": "counters"}).text
+
     try:
         pages: int = int(re.findall("[^\D+]\d+", numberOfPagesText)[-1])
     except IndexError:
         pages: int = int(re.findall("\d", numberOfPagesText)[-1])
     return pages
+
+
+def getHTML(url: str) -> BeautifulSoup:
+    resp: Response = requests.get(url=url).text
+    return BeautifulSoup(markup=resp, features="lxml")
 
 
 def getWords(html: BeautifulSoup) -> list:
@@ -51,28 +57,21 @@ def writeToJSON(filename: str, store: dict) -> bool:
         wordFile.write(dumps(obj=store, ensure_ascii=False))
         print(f"Wrote word list to file output/{filename}")
         wordFile.close()
+    return exists(filename)
 
 
 if __name__ == "__main__":
-    words: list = []
-    letterList: list = ["0"]
-    pageCount: list = []
-
-    unicodeChar: int
-    for unicodeChar in range(97, 123):
-        letterList.append(chr(unicodeChar).lower())
+    temp: dict = {}
 
     with PixelBar("Getting page numbers for dictionary keys... ", max=27) as pb:
-
-        letter: str
-        for letter in letterList:
-            url: str = f"https://www.merriam-webster.com/browse/dictionary/{letter}/1"
-            firstPage: BeautifulSoup = getHTML(url=url)
-            pages: int = getNumberOfPages(firstPage)
-            pageCount.append({"wordPageCount": pages})
+        unicodeLetter: chr
+        for i in range(96, 123):
+            if i == 96:
+                unicodeLetter = "0"
+            else:
+                unicodeLetter: chr = chr(i)
+            temp[unicodeLetter] = getLetterPageCount(unicodeLetter)
             pb.next()
-
-    store = dict(zip(letterList, pageCount))
 
     key: str
     for key in store.keys():
