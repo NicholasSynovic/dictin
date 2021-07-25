@@ -1,5 +1,5 @@
 import re
-from json import dumps
+from json import dumps, load
 from os.path import exists
 
 import requests
@@ -53,66 +53,88 @@ def getWordType(html: BeautifulSoup) -> list:
 
 
 def writeToJSON(filename: str, store: dict) -> bool:
-    with open(file=filename, mode="w", encoding="utf-8") as wordFile:
-        wordFile.write(dumps(obj=store, ensure_ascii=False))
+    with open(file=filename, mode="w", encoding="utf-8") as jsonFile:
+        jsonFile.write(dumps(obj=store, ensure_ascii=False))
+        jsonFile.close()
+    if exists(filename):
         print(f"Wrote word list to file output/{filename}")
-        wordFile.close()
-    return exists(filename)
+        return True
+    return False
+
+
+def loadJSON(filename: str) -> dict:
+    data: dict
+    with open(file=filename, mode="r") as jsonFile:
+        data = load(fp=jsonFile)
+        jsonFile.close()
+    return data
 
 
 if __name__ == "__main__":
+    # Get all of the letters of the alphabet and the number of page indexes that they have
     temp: dict = {}
-
     with PixelBar("Getting page numbers for dictionary keys... ", max=27) as pb:
         unicodeLetter: chr
+        i: int
         for i in range(96, 123):
             if i == 96:
                 unicodeLetter = "0"
             else:
-                unicodeLetter: chr = chr(i)
+                unicodeLetter = chr(i)
             temp[unicodeLetter] = getLetterPageCount(unicodeLetter)
             pb.next()
 
-    key: str
-    for key in store.keys():
-        data: dict = {}
+    # For each letter return all of the words starting with that letter and write it to JSON
+    letter: str
+    for letter in temp.keys():
 
-        data["letter"] = key
-        data["numberOfWords"] = 0
-        data["urls"] = {}
+        data: dict = {}
+        data["letter"] = letter
+        data["indexURLS"] = {}
 
         with PixelBar(
-            f"Getting words listed under the dictionary index: {key}... ",
-            max=store[key]["wordPageCount"],
+            f"Getting words listed under the dictionary index: {letter}... ",
+            max=temp[letter],
         ) as pb:
-            page: int
-            for page in range(store[key]["wordPageCount"]):
-                pageString: str = str(page + 1)
+            i: int
+            for i in range(temp[letter]):
+                wordList: list
+                indexURL: str = f"https://www.merriam-webster.com/browse/dictionary/{letter}/{i + 1}"
 
-                url: str = f"https://www.merriam-webster.com/browse/dictionary/{key}/{pageString}"
+                html: BeautifulSoup = getHTML(url=indexURL)
+                wordList = getWords(html=html)
 
-                html: BeautifulSoup = getHTML(url=url)
-                words += getWords(html=html)
+                data["indexURLS"][indexURL] = {"numberOfWords": 0, "words": []}
+                data["indexURLS"][indexURL]["numberOfWords"] = len(wordList)
 
-                data["numberOfWords"] += len(words)
-
-                data["urls"][url] = {"words": []}
-
-                for index in range(len(words)):
-                    wordURL = (
-                        f"https://www.merriam-webster.com/dictionary/{words[index]}"
-                    ).replace(" ", "+")
-
-                    # html = getHTML(url=wordURL)
-
-                    data["urls"][url]["words"].append(
+                word: str
+                for word in wordList:
+                    data["indexURLS"][indexURL]["words"].append(
                         {
-                            words[index]: [
-                                wordURL,
-                            ]
+                            "word": word,
+                            "type": [],
+                            "definitions": [],
+                            "wordURL": f"https://www.merriam-webster.com/dictionary/{word}".replace(
+                                " ", "+"
+                            ),
                         }
                     )
-
                 pb.next()
 
-        writeToJSON(filename=f"output/{key}.json", store=data)
+        writeToJSON(filename=f"output/{letter}.json", store=data)
+
+    # Load data from JSON file and get all of the definitions associated with the words
+
+    temp: dict = {}
+    i: int
+    unicodeLetter: chr
+    for i in range(96, 123):
+        if i == 96:
+            unicodeLetter = "0"
+        else:
+            unicodeLetter = chr(i)
+        with PixelBar(
+            f"Getting data from file: output/{unicodeLetter}.json... ", max=27
+        ) as pb:
+            temp = loadJSON(filename=f"output/{unicodeLetter}.json")
+            pb.next()
