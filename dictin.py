@@ -57,7 +57,7 @@ def writeToJSON(filename: str, store: dict) -> bool:
         jsonFile.write(dumps(obj=store, ensure_ascii=False))
         jsonFile.close()
     if exists(filename):
-        print(f"Wrote word list to file output/{filename}")
+        print(f"Wrote word list to file: output/{filename}")
         return True
     return False
 
@@ -67,65 +67,65 @@ def loadJSON(filename: str) -> dict:
     with open(file=filename, mode="r") as jsonFile:
         data = load(fp=jsonFile)
         jsonFile.close()
+    print(f"Load word list from file: output/{filename}")
     return data
 
 
 if __name__ == "__main__":
     # Get all of the letters of the alphabet and the number of page indexes that they have
-    temp: dict = {}
-    with PixelBar("Getting page numbers for dictionary keys... ", max=27) as pb:
-        unicodeLetter: chr
-        i: int
-        for i in range(96, 123):
-            if i == 96:
-                unicodeLetter = "0"
-            else:
-                unicodeLetter = chr(i)
-            temp[unicodeLetter] = getLetterPageCount(unicodeLetter)
-            pb.next()
+    # temp: dict = {}
+    # with PixelBar("Getting page numbers for dictionary keys... ", max=27) as pb:
+    #     unicodeLetter: chr
+    #     i: int
+    #     for i in range(96, 123):
+    #         if i == 96:
+    #             unicodeLetter = "0"
+    #         else:
+    #             unicodeLetter = chr(i)
+    #         temp[unicodeLetter] = getLetterPageCount(unicodeLetter)
+    #         pb.next()
 
     # For each letter return all of the words starting with that letter and write it to JSON
-    letter: str
-    for letter in temp.keys():
+    # letter: str
+    # for letter in temp.keys():
 
-        data: dict = {}
-        data["letter"] = letter
-        data["indexURLS"] = {}
+    #     data: dict = {}
+    #     data["letter"] = letter
+    #     data["indexURLs"] = {}
 
-        with PixelBar(
-            f"Getting words listed under the dictionary index: {letter}... ",
-            max=temp[letter],
-        ) as pb:
-            i: int
-            for i in range(temp[letter]):
-                wordList: list
-                indexURL: str = f"https://www.merriam-webster.com/browse/dictionary/{letter}/{i + 1}"
+    #     with PixelBar(
+    #         f"Getting words listed under the dictionary index: {letter}... ",
+    #         max=temp[letter],
+    #     ) as pb:
+    #         i: int
+    #         for i in range(temp[letter]):
+    #             wordList: list
+    #             indexURL: str = f"https://www.merriam-webster.com/browse/dictionary/{letter}/{i + 1}"
 
-                html: BeautifulSoup = getHTML(url=indexURL)
-                wordList = getWords(html=html)
+    #             html: BeautifulSoup = getHTML(url=indexURL)
+    #             wordList = getWords(html=html)
 
-                data["indexURLS"][indexURL] = {"numberOfWords": 0, "words": []}
-                data["indexURLS"][indexURL]["numberOfWords"] = len(wordList)
+    #             data["indexURLs"][indexURL] = {"numberOfWords": 0, "words": []}
+    #             data["indexURLs"][indexURL]["numberOfWords"] = len(wordList)
 
-                word: str
-                for word in wordList:
-                    data["indexURLS"][indexURL]["words"].append(
-                        {
-                            "word": word,
-                            "type": [],
-                            "definitions": [],
-                            "wordURL": f"https://www.merriam-webster.com/dictionary/{word}".replace(
-                                " ", "+"
-                            ),
-                        }
-                    )
-                pb.next()
+    #             word: str
+    #             for word in wordList:
+    #                 data["indexURLs"][indexURL]["words"].append(
+    #                     {
+    #                         "word": word,
+    #                         "type": [],
+    #                         "definitions": [],
+    #                         "wordURL": f"https://www.merriam-webster.com/dictionary/{word}".replace(
+    #                             " ", "+"
+    #                         ),
+    #                     }
+    #                 )
+    #             pb.next()
 
-        writeToJSON(filename=f"output/{letter}.json", store=data)
+    #     writeToJSON(filename=f"output/{letter}.json", store=data)
 
     # Load data from JSON file and get all of the definitions associated with the words
 
-    temp: dict = {}
     i: int
     unicodeLetter: chr
     for i in range(96, 123):
@@ -133,8 +133,38 @@ if __name__ == "__main__":
             unicodeLetter = "0"
         else:
             unicodeLetter = chr(i)
-        with PixelBar(
-            f"Getting data from file: output/{unicodeLetter}.json... ", max=27
-        ) as pb:
-            temp = loadJSON(filename=f"output/{unicodeLetter}.json")
-            pb.next()
+
+        jsonFile: dict = loadJSON(filename=f"output/{unicodeLetter}.json")
+
+        wordList: list
+        index: str
+        for index in jsonFile["indexURLs"].keys():
+            urlIndexData: dict = jsonFile["indexURLs"][index]
+
+            word: dict
+            for word in urlIndexData["words"]:
+                wordTypeList: list = []
+
+                wordHTML: BeautifulSoup = getHTML(url=word["wordURL"])
+
+                wordTypeResultSet: ResultSet = wordHTML.find_all(
+                    name="a", attrs={"class": "important-blue-link"}
+                )
+
+                wordTypeList.append(word["word"])
+
+                # TODO: This for loop could be more efficent
+                wordTypeTag: Tag
+                for wordTypeTag in wordTypeResultSet:
+                    wordTypeList.append(wordTypeTag.text)
+
+                    try:
+                        subType: str = wordTypeTag.find(
+                            name="a", attrs={"class": "important-blue-link"}
+                        ).text
+
+                        wordTypeList.append(subType)
+                    except AttributeError:
+                        pass
+
+                    print(wordTypeList)
