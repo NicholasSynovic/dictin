@@ -29,13 +29,26 @@ def getWords(html: BeautifulSoup) -> list:
 
     word: str
     for word in wordsList:
-        words.append(word.text)
+        encodedWord: str = word.text.encode("UTF-8")
+        words.append(encodedWord.decode("UTF-8"))
     return words
 
 
+def getWordType(html: BeautifulSoup) -> list:
+    wtList: list = []
+    wtResultSet: ResultSet = html.find_all(
+        name="a", attrs={"class": "important-blue-link"}
+    )
+
+    wtTag: Tag
+    for wtTag in wtResultSet:
+        wtList.append(wtTag.text)
+    return wtList
+
+
 def writeToJSON(filename: str, store: dict) -> bool:
-    with open(filename, "w") as wordFile:
-        wordFile.write(dumps(store))
+    with open(file=filename, mode="w", encoding="utf-8") as wordFile:
+        wordFile.write(dumps(obj=store, ensure_ascii=False))
         print(f"Wrote word list to file output/{filename}")
         wordFile.close()
 
@@ -63,12 +76,14 @@ if __name__ == "__main__":
 
     key: str
     for key in store.keys():
+        data: dict = {}
 
-        store[key]["numberOfWords"] = 0
-        store[key]["urls"] = {}
+        data["letter"] = key
+        data["numberOfWords"] = 0
+        data["urls"] = {}
 
         with PixelBar(
-            "Getting words listed under the dictionary index: " + key + "... ",
+            f"Getting words listed under the dictionary index: {key}... ",
             max=store[key]["wordPageCount"],
         ) as pb:
             page: int
@@ -80,9 +95,25 @@ if __name__ == "__main__":
                 html: BeautifulSoup = getHTML(url=url)
                 words += getWords(html=html)
 
-                store[key]["urls"][url] = words
-                store[key]["numberOfWords"] += len(words)
+                data["numberOfWords"] += len(words)
+
+                data["urls"][url] = {"words": []}
+
+                for index in range(len(words)):
+                    wordURL = (
+                        f"https://www.merriam-webster.com/dictionary/{words[index]}"
+                    ).replace(" ", "+")
+
+                    # html = getHTML(url=wordURL)
+
+                    data["urls"][url]["words"].append(
+                        {
+                            words[index]: [
+                                wordURL,
+                            ]
+                        }
+                    )
 
                 pb.next()
 
-        writeToJSON(filename=f"{key}.json", store=store[key])
+        writeToJSON(filename=f"output/{key}.json", store=data)
