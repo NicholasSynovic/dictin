@@ -124,7 +124,7 @@ if __name__ == "__main__":
 
     #     writeToJSON(filename=f"output/{letter}.json", store=data)
 
-    # Load data from JSON file and get all of the definitions associated with the words
+    # Load data from JSON file and get all of the word types associated with the words
 
     i: int
     unicodeLetter: chr
@@ -151,8 +151,6 @@ if __name__ == "__main__":
                     name="a", attrs={"class": "important-blue-link"}
                 )
 
-                wordTypeList.append(word["word"])
-
                 # TODO: This for loop could be more efficent
                 wordTypeTag: Tag
                 for wordTypeTag in wordTypeResultSet:
@@ -167,4 +165,6 @@ if __name__ == "__main__":
                     except AttributeError:
                         pass
 
-                    print(wordTypeList)
+                word["type"] = wordTypeList
+
+        writeToJSON(filename=f"output/{unicodeLetter}.json", store=jsonFile)
