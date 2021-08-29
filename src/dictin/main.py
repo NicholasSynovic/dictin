@@ -5,7 +5,6 @@ from os.path import exists
 import requests
 from bs4 import BeautifulSoup, Tag
 from bs4.element import ResultSet
-from progress.bar import PixelBar
 from requests.models import Response
 
 
