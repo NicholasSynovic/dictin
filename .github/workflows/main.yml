@@ -24,17 +24,21 @@ jobs:
 
       - name: Install requirements
         run: |
+          apt install zip -y
           python3 -m pip install --upgrade pip
           python3 -m pip install -r requirements.txt
 
       - name: Execute script
-        run: python3 src/dictin/main.py -o
+        run: python3 src/dictin/main.py
+
+      - name: Compress output directory
+        run: zip -r output.zip output
 
       - name: Release dictionary files
         uses: djnicholson/release-action@v2.10
         with:
           token: ${{ secrets.TOKEN }}
-          asset-name: 'languages.json'
+          asset-name: 'output.zip'
           release-name: ${{ github.run_number }}-run
           tag-name: ${{ github.run_number }}-run
-          file: 'languages.json'
+          file: 'output.zip'
