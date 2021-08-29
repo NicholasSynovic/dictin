@@ -71,61 +71,7 @@ def loadJSON(filename: str) -> dict:
     return data
 
 
-if __name__ == "__main__":
-    # Get all of the letters of the alphabet and the number of page indexes that they have
-    # temp: dict = {}
-    # with PixelBar("Getting page numbers for dictionary keys... ", max=27) as pb:
-    #     unicodeLetter: chr
-    #     i: int
-    #     for i in range(96, 123):
-    #         if i == 96:
-    #             unicodeLetter = "0"
-    #         else:
-    #             unicodeLetter = chr(i)
-    #         temp[unicodeLetter] = getLetterPageCount(unicodeLetter)
-    #         pb.next()
-
-    # For each letter return all of the words starting with that letter and write it to JSON
-    # letter: str
-    # for letter in temp.keys():
-
-    #     data: dict = {}
-    #     data["letter"] = letter
-    #     data["indexURLs"] = {}
-
-    #     with PixelBar(
-    #         f"Getting words listed under the dictionary index: {letter}... ",
-    #         max=temp[letter],
-    #     ) as pb:
-    #         i: int
-    #         for i in range(temp[letter]):
-    #             wordList: list
-    #             indexURL: str = f"https://www.merriam-webster.com/browse/dictionary/{letter}/{i + 1}"
-
-    #             html: BeautifulSoup = getHTML(url=indexURL)
-    #             wordList = getWords(html=html)
-
-    #             data["indexURLs"][indexURL] = {"numberOfWords": 0, "words": []}
-    #             data["indexURLs"][indexURL]["numberOfWords"] = len(wordList)
-
-    #             word: str
-    #             for word in wordList:
-    #                 data["indexURLs"][indexURL]["words"].append(
-    #                     {
-    #                         "word": word,
-    #                         "type": [],
-    #                         "definitions": [],
-    #                         "wordURL": f"https://www.merriam-webster.com/dictionary/{word}".replace(
-    #                             " ", "+"
-    #                         ),
-    #                     }
-    #                 )
-    #             pb.next()
-
-    #     writeToJSON(filename=f"output/{letter}.json", store=data)
-
-    # Load data from JSON file and get all of the word types associated with the words
-
+def main() -> None:
     i: int
     unicodeLetter: chr
     for i in range(96, 123):
@@ -168,3 +114,7 @@ if __name__ == "__main__":
                 word["type"] = wordTypeList
 
         writeToJSON(filename=f"output/{unicodeLetter}.json", store=jsonFile)
+
+
+if __name__ == "__main__":
+    main()
