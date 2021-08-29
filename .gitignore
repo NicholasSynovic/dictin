@@ -3,3 +3,4 @@
 env
 dist
 src/dictin.egg-info
+*.zip

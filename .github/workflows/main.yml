@@ -32,7 +32,7 @@ jobs:
         run: python3 src/dictin/main.py
 
       - name: Compress output directory
-        run: zip -r output.zip output
+        run: zip -r output.zip src/dictin/output
 
       - name: Release dictionary files
         uses: djnicholson/release-action@v2.10

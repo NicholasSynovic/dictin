@@ -73,6 +73,8 @@ def loadJSON(filename: str) -> dict:
 
 def main() -> None:
 
+    # This function is to large, lets break it up
+
     # Get all of the letters of the alphabet and the number of page indexes that they have
     temp: dict = {}
     with PixelBar("Getting page numbers for dictionary keys... ", max=27) as pb:
