@@ -1,0 +1,40 @@
+name: Release List
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 15 * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9.6'
+
+      - name: Install requirements
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r requirements.txt
+
+      - name: Execute script
+        run: python3 src/dictin/main.py -o
+
+      - name: Release dictionary files
+        uses: djnicholson/release-action@v2.10
+        with:
+          token: ${{ secrets.TOKEN }}
+          asset-name: 'languages.json'
+          release-name: ${{ github.run_number }}-run
+          tag-name: ${{ github.run_number }}-run
+          file: 'languages.json'

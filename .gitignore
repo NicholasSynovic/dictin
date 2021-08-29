@@ -1,3 +1,5 @@
 *.json
 .vscode
 env
+dist
+src/dictin.egg-info
